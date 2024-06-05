@@ -1,30 +1,39 @@
 # Stubs for external services that produce and consume data for the location service.
 import asyncio
 from random import random
-
+from datetime import datetime
 import httpx
-from kafka import KafkaProducer
 import json
+from aiokafka import AIOKafkaProducer
+import asyncio
 
 
 async def geo_data_generator():
-    producer = KafkaProducer(bootstrap_servers='localhost:29092',
-                             value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-    while True:
-        await asyncio.sleep(random() * 2)
-        producer.send('user_location', {
-            'lat': random() * 360 - 180,
-            'lon': random() * 360
-        })
-        print("sent message")
+    async with AIOKafkaProducer(bootstrap_servers='localhost:9092') as producer:
+        await producer.start()
+        while True:
+            await asyncio.sleep(random() * 2)
+            user_id = round(random() * 5)
+            location = {
+                'user_id': user_id,
+                'ts': datetime.now().isoformat(),
+                'lat': round(random() * 180 - 90, 5),
+                'long': round(random() * 360 - 180, 5)
+            }
+            await producer.send_and_wait('user_location', json.dumps(location).encode('utf-8'))
+            print(f"INFO:  Set user #{user_id} location {location}")
 
 
 async def geo_data_consumer():
     async with httpx.AsyncClient() as client:
         while True:
             await asyncio.sleep(1.0)
-            r = await client.get('https://www.example.com/')
-            print(r)
+            user_id = round(random() * 5)
+            try:
+                r = await client.get(f'http://127.0.0.1:8080/user/{user_id}/weather')
+                print(f'INFO:  Get user #{user_id} location {r.json()}')
+            except Exception as e:
+                print(f'ERROR:  Get user #{user_id} location ERROR: {e}')
 
 
 async def main():

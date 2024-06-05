@@ -1,7 +1,9 @@
-# fastapi
-flask[async]
-kafka-python
+fastapi
+# flask[async]
+# kafka-python
+aiokafka
 open-meteo
 # requests
 # grequests
-httpx
+# httpx
+asyncpg
