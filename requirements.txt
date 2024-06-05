@@ -1,3 +1,7 @@
+# fastapi
+flask[async]
 kafka-python
-openmeteo-requests
-requests
+open-meteo
+# requests
+# grequests
+httpx

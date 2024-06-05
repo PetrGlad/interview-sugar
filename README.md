@@ -36,7 +36,7 @@ key2:value2
 
 Reading
 ```
-kafkacat -C -b localhost:9092 -t topic1 -o beginning
+kafkacat -C -b localhost:29092 -t topic1 -o beginning
 ```
 
 
@@ -45,3 +45,4 @@ kafkacat -C -b localhost:9092 -t topic1 -o beginning
 
 * [Kafka Docker](https://www.baeldung.com/ops/kafka-docker-setup)
 * [Kafka CLI](https://codingharbour.com/apache-kafka/learn-how-to-use-kafkacat-the-most-versatile-cli-client/)
+* [OPen Meteo API](https://open-meteo.com/en/docs)

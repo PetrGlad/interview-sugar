@@ -1,5 +1,13 @@
 version: '2'
 services:
+  # See https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
+  postgres:
+    image: postgres:14.5
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+
   # See https://www.baeldung.com/ops/kafka-docker-setup
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.4
