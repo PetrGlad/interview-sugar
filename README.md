@@ -35,7 +35,8 @@ Development requirements
 * `docker`, `docker-compose` to run required external services
 * `python3` (tested with CPython 3.10.12), pip
 
-To prepare the environment and launch demo setup run `./run-demo.sh`
+To prepare the environment and launch demo setup run `./run-demo.sh`.
+To stop the script press ENTER.
 
 Besides the API service itself the demo runs kafka as event bus, postgres for caching, and another Python script that
 generates some fake locations for users and calls the service's API to see the result. The 
