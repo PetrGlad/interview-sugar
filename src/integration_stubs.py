@@ -21,19 +21,19 @@ async def geo_data_generator():
                 'long': round(random() * 360 - 180, 5)
             }
             await producer.send_and_wait('user_location', json.dumps(location).encode('utf-8'))
-            print(f"INFO:  Set user #{user_id} location {location}")
+            print(f"INFO [generator]  Set user #{user_id} location {location}")
 
 
 async def geo_data_consumer():
     async with httpx.AsyncClient() as client:
         while True:
-            await asyncio.sleep(1.0)
+            await asyncio.sleep(2.0)
             user_id = round(random() * 5)
             try:
                 r = await client.get(f'http://127.0.0.1:8080/user/{user_id}/weather')
-                print(f'INFO:  Get user #{user_id} location {r.json()}')
+                print(f'INFO [client]  Get user #{user_id} location {r.json()}')
             except Exception as e:
-                print(f'ERROR:  Get user #{user_id} location ERROR: {e}')
+                print(f'ERROR [client]  Get user #{user_id} location ERROR: {e}')
 
 
 async def main():

@@ -14,10 +14,11 @@ import uvicorn
 
 
 async def setup_database(conn):
-    # A poor man's DB migration.
+    # The data is transient, so we can re-create database at any time.
+    # If we'll have any data that is worth to keep, then we should use DB migrations instead.
     try:
         await conn.fetch('select count(*) from recent_user_location')
-        print("INFO:  DB table recent_user_location found.")
+        print("INFO [db-setup]  DB table recent_user_location found.")
     except Exception as e:
         await conn.execute('''
             create table recent_user_location(
@@ -27,7 +28,7 @@ async def setup_database(conn):
                 long real
             )
         ''')
-        print("INFO:  DB table recent_user_location created.")
+        print("INFO [db-setup]  DB table recent_user_location created.")
 
 
 def connect_db():
@@ -44,10 +45,8 @@ async def user_location_update():
             group_id="user_weather") as consumer:
         while True:
             async for msg in consumer:
-                print("consumed: ", msg.topic, msg.partition, msg.offset,
-                      msg.key, msg.value, msg.timestamp)
                 location = json.loads(msg.value)
-                print(f"I Got location {location}")
+                print(f"INFO [kafka-consumer]  Got location {location}")
                 await conn.execute(
                     '''
                     insert into recent_user_location(user_id, ts, lat, long)
@@ -60,12 +59,14 @@ async def user_location_update():
                     float(location['long']))
 
 
-async def find_user_location(user_id: int) -> dict:
+async def find_user_location(user_id: int) -> Union[dict, None]:
     conn = await connect_db()
     try:
-        r = await conn.fetch('select ts, lat, long from recent_user_location where user_id=$1', user_id, )
-        location = r[0]
-        print(f'Query results #{user_id}: {r}')
+        r = await conn.fetch('select ts, lat, long from recent_user_location where user_id=$1', user_id)
+        try:
+            location = r[0]
+        except IndexError:
+            return None
         return {'lat': location['lat'], 'long': location['long']}
     finally:
         await conn.close()
@@ -83,6 +84,8 @@ async def weather_for_location(lat: float, long: float) -> Union[dict, None]:
 
 async def get_weather_for_user(user_id: int) -> Union[dict, None]:
     location = await find_user_location(user_id)
+    if location is None:
+        return None
     return await weather_for_location(location['lat'], location['long'])
 
 
@@ -97,7 +100,7 @@ async def read_root():
 @app.get("/user/{user_id}/weather")
 async def read_item(user_id: int):
     weather = await get_weather_for_user(user_id)
-    print(f'RETURNING WEATHER: {weather}')
+    print(f'DEBUG [api]  User {user_id} weather is {weather}.')
     return {'user_id': user_id, 'weather': weather}
 
 
@@ -108,6 +111,6 @@ def asyncio_loop():
 
 
 if __name__ == "__main__":
-    t = Thread(target=asyncio_loop)
+    t = Thread(target=asyncio_loop, daemon=True)
     t.start()
     uvicorn.run(app, host='127.0.0.1', port=8080)

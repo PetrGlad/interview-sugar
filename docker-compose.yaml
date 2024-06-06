@@ -1,14 +1,14 @@
 version: "3"
 services:
-  # See https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
   postgres:
     image: postgres:14.5
     ports:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: notasecret
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
-  # https://medium.com/@tetianaokhotnik/setting-up-a-local-kafka-environment-in-kraft-mode-with-docker-compose-and-bitnami-image-enhanced-29a2dcabf2a9
   kafka_b:
     image: docker.io/bitnami/kafka:3.4
     hostname: kafka_b
@@ -33,4 +33,6 @@ services:
       - KAFKA_CFG_NUM_PARTITIONS=2
 volumes:
   kafka_data:
+    driver: local
+  pg_data:
     driver: local
