@@ -2,8 +2,6 @@ from typing import Union
 import asyncio
 
 from open_meteo import OpenMeteo
-# from open_meteo.models import DailyParameters, HourlyParameters
-from flask import Flask
 from threading import Thread
 import json
 from aiokafka import AIOKafkaConsumer
