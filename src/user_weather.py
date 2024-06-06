@@ -11,6 +11,11 @@ from fastapi import FastAPI
 import uvicorn
 
 
+def connect_db():
+    return asyncpg.connect(user='postgres', password='notasecret',
+                           database='postgres', host='127.0.0.1')
+
+
 async def setup_database(conn):
     # The data is transient, so we can re-create database at any time.
     # If we'll have any data that is worth to keep, then we should use DB migrations instead.
@@ -27,11 +32,6 @@ async def setup_database(conn):
             )
         ''')
         print("INFO [db-setup]  DB table recent_user_location created.")
-
-
-def connect_db():
-    return asyncpg.connect(user='postgres', password='notasecret',
-                           database='postgres', host='127.0.0.1')
 
 
 async def user_location_update():
@@ -108,7 +108,10 @@ def asyncio_loop():
     loop.run_until_complete(user_location_update())
 
 
-if __name__ == "__main__":
-    t = Thread(target=asyncio_loop, daemon=True)
-    t.start()
+def run_fastapi():
     uvicorn.run(app, host='127.0.0.1', port=8080)
+
+if __name__ == "__main__":
+    t = Thread(target=run_fastapi, daemon=True)
+    t.start()
+    asyncio.run(user_location_update())
