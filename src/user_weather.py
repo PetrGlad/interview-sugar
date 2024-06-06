@@ -98,7 +98,7 @@ async def read_root():
 @app.get("/user/{user_id}/weather")
 async def read_item(user_id: int):
     weather = await get_weather_for_user(user_id)
-    print(f'DEBUG [api]  User {user_id} weather is {weather}.')
+    print(f'DEBUG [api]  User #{user_id} weather is {weather}.')
     return {'user_id': user_id, 'weather': weather}
 
 

@@ -31,9 +31,9 @@ async def geo_data_consumer():
             user_id = round(random() * 5)
             try:
                 r = await client.get(f'http://127.0.0.1:8080/user/{user_id}/weather')
-                print(f'INFO [client]  Get user #{user_id} location {r.json()}')
+                print(f'INFO [client]  Got user #{user_id} weather {r.json()}')
             except Exception as e:
-                print(f'ERROR [client]  Get user #{user_id} location ERROR: {e}')
+                print(f'ERROR [client]  Got user #{user_id} weather ERROR: {e}')
 
 
 async def main():
