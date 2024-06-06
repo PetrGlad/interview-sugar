@@ -111,6 +111,7 @@ def asyncio_loop():
 def run_fastapi():
     uvicorn.run(app, host='127.0.0.1', port=8080)
 
+
 if __name__ == "__main__":
     t = Thread(target=run_fastapi, daemon=True)
     t.start()
