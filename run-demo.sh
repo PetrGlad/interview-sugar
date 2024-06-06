@@ -10,7 +10,7 @@ docker compose up -d
 echo "Waiting for services to come up..."
 sleep 10s
 
-trap 'kill $STUBS_PID ; kill $API_PID ; docker compose down' SIGINT SIGTERM EXIT
+trap 'kill $STUBS_PID ; kill $API_PID ; docker compose down ; exit 0' SIGINT SIGTERM EXIT
 
 python3 src/integration_stubs.py &
 STUBS_PID=$!
