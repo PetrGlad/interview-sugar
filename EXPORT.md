@@ -1,7 +1,6 @@
 # Exporting data tor ML training
 
-I would expect that the ML model would make some kind predictions nbased on time-series data related to a user based on
-their recent history. So I would organize the data ordered by time.
+I would expect that the ML model would make some kind predictions based on time-series data related to a user based on their recent history. So I would organize the data ordered by time.
 The data can be segmented by {user, time_period} where time period can be from 1 hour to 1 day.
 
 I would not wait to export data weekly. So each new data segment can be shipped daily or, depending on load, more often.
@@ -21,8 +20,7 @@ It is unlikely that all the data will fit in a single file, so each job replica 
 separately.
 
 Note that the implemented weather service currently does not keep history. To export that one would need to
-(preferably) modify the implementation or use an external scrapper service recording current values (this would be slow
-if there are many users). 
+(preferably) modify the implementation or use an external scrapper service recording current values (this would be slow if there are many users). 
 
 
  
